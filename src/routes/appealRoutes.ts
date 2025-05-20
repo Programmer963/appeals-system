@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { asyncHandler } from "../utils/asyncHandler";
 import {
     createAppeal,
     takeInProgress,
@@ -10,11 +11,11 @@ import {
 
 const router = Router();
 
-router.post('/', createAppeal);
-router.patch('/:id/start', takeInProgress);
-router.patch('/:id/complete', completeAppeal);
-router.patch('/:id/cancel', cancelAppeal);
-router.get('/', getAppeals);
-router.post('/progress-to-cancel', cancelAllInProgress);
+router.post('/', asyncHandler(createAppeal));
+router.patch('/:id/start', asyncHandler(takeInProgress));
+router.patch('/:id/complete', asyncHandler(completeAppeal));
+router.patch('/:id/cancel', asyncHandler(cancelAppeal));
+router.get('/', asyncHandler(getAppeals));
+router.post('/progress-to-cancel', asyncHandler(cancelAllInProgress));
 
 export default router;
