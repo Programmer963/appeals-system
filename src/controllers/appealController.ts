@@ -74,24 +74,49 @@ export const cancelAppeal = async (req: Request, res: Response) => {
 }
 
 export const getAppeals = async (req: Request, res: Response) => {
-    const { date, from, to } = req.query;
+    const { 
+        status,
+        subject,
+        from,
+        to,
+        sort = 'createdAt',
+        order = 'desc',
+        page = '1',
+        pageSize = '10'
+    } = req.query;
     
     let where: any = {};
     
-    if (date) {
-        where.createdAt = {
-            [Op.gte]: new Date(date as string),
-            [Op.lt]: new Date(new Date(date as string).getTime() + 24 * 60 * 60 * 1000)
-        };
+    if (status) {
+        where.status = status;
     }
-    else if (from && to) {
-        where.createdAt = {
-            [Op.between]: [new Date(from as string), new Date(to as string)],
-        };
+
+    if (subject) {
+        where.subject = { [Op.iLike]: `%${subject}%` };
     }
-    
-    const appeals = await Appeal.findAll({ where, order: [['createdAt', 'DESC']] });
-    res.json(appeals);
+
+    if (from || to) {
+        where.createdAt = {};
+        if (from) where.createdAt[Op.gte] = new Date(from as string);
+        if (to) where.createdAt[Op.lte] = new Date(to as string);
+    }
+
+    const limit = parseInt(pageSize as string, 10);
+    const offset = (parseInt(page as string, 10) - 1) * limit;
+
+    const { rows: appeals, count: total } = await Appeal.findAndCountAll({
+        where,
+        order: [[ sort as string, order as string ]],
+        limit,
+        offset
+    });
+
+    res.json({
+        total,
+        page: parseInt(page as string),
+        pageSize: limit,
+        appeals
+    });
 }
 
 export const cancelAllInProgress = async (req: Request, res: Response) => {
