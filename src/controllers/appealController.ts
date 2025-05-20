@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import { Appeal, AppealStatus } from "../models/appeal";
+import { Appeal } from "../models/appeal";
+import { AppealStatus } from "../types/appeal";
 import { Op } from "sequelize";
 
 export const createAppeal = async (req: Request, res: Response) => {
