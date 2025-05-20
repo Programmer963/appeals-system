@@ -173,9 +173,21 @@ router.patch('/:id/cancel', asyncHandler(cancelAppeal));
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Appeal'
+ *               type: object
+ *               properties:
+ *                 total:
+ *                   type: integer
+ *                   example: 2
+ *                 page:
+ *                   type: integer
+ *                   example: 1
+ *                 pageSize:
+ *                   type: integer
+ *                   example: 10
+ *                 appeals:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Appeal'
  */
 router.get('/', asyncHandler(getAppeals));
 
@@ -183,16 +195,18 @@ router.get('/', asyncHandler(getAppeals));
  * @swagger
  * /api/appeals/progress-to-cancel:
  *   post:
- *     summary: Отменить все обращения в статусе "в работе"
+ *     summary: Отменить все обращения в статусе "В работе"
  *     responses:
  *       200:
  *         description: Все обращения в работе отменены
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Appeal'
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Canceled 1 appeal(s)
  */
 router.post('/progress-to-cancel', asyncHandler(cancelAllInProgress));
 
